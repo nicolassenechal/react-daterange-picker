@@ -15,6 +15,7 @@ var deploy = require('gulp-gh-pages');
 var React = require('react');
 var webpack = require('webpack');
 var gulpWebpack = require('gulp-webpack');
+var Server = require('karma').Server;
 
 var PRODUCTION = (process.env.NODE_ENV === 'production');
 
@@ -68,6 +69,13 @@ var webpackConfig = {
   },
   plugins: gulpPlugins
 };
+
+gulp.task('test', function (done) {
+    new Server({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true
+    }, done).start();
+});
 
 gulp.task('build-dist-js', function() {
   // build javascript files
