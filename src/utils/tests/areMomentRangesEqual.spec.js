@@ -1,3 +1,5 @@
+import areMomentRangesEqual from '../areMomentRangesEqual';
+
 describe('This', function () {
 
     it('should work', () => {

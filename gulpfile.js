@@ -15,7 +15,7 @@ var deploy = require('gulp-gh-pages');
 var React = require('react');
 var webpack = require('webpack');
 var gulpWebpack = require('gulp-webpack');
-var Server = require('karma').Server;
+var KarmaServer = require('karma').Server;
 
 var PRODUCTION = (process.env.NODE_ENV === 'production');
 
@@ -70,10 +70,34 @@ var webpackConfig = {
   plugins: gulpPlugins
 };
 
-gulp.task('test', function (done) {
-    new Server({
+gulp.task('test-unit', function (done) {
+    new KarmaServer({
+        configFile: __dirname + '/karma.conf.js'
+    }, done).start();
+});
+
+gulp.task('test-coverage', function (done) {
+    new KarmaServer({
         configFile: __dirname + '/karma.conf.js',
-        singleRun: true
+        reporters: ['mocha', 'coverage', 'threshold'],
+        singleRun: true,
+        webpack: {
+            module: {
+                preLoaders: [{
+                    test: /\.(js|jsx)$/,
+                    include: path.resolve('src/'),
+                    exclude: /tests/,
+                    loader: 'isparta'
+                }, {
+                    test: /\.spec.js$/,
+                    include: path.resolve('src/'),
+                    loader: 'babel'
+                }],
+                loaders: [
+                    {test: /\.(js|jsx)$/, exclude: /node_modules/, loader: require.resolve('babel-loader')}
+                ]
+            }
+        }
     }, done).start();
 });
 
@@ -138,7 +162,7 @@ gulp.task('example-server', function() {
 });
 
 gulp.task('build', ['build-dist-js', 'build-example', 'build-example-js', 'build-example-scss']);
-gulp.task('develop', ['build-example', 'watch-example-js', 'watch-example-scss', 'example-server']);
+gulp.task('develop', ['test-unit', 'build-example', 'watch-example-js', 'watch-example-scss', 'example-server']);
 
 gulp.task('deploy-example', ['build'], function() {
   return gulp.src('./example/**/*')
