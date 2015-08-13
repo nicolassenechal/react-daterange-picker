@@ -8,7 +8,7 @@ const TestUtils = React.addons.TestUtils;
 
 describe('The CalendarSelection Component', function () {
     beforeEach(() => {
-        this.spy = spyOn(CalendarSelection.prototype.__reactAutoBindMap, 'cx').and.returnValue('my-class');
+        this.spyCx = spyOn(CalendarSelection.prototype.__reactAutoBindMap, 'cx').and.returnValue('my-class');
 
         var shallowRenderer = TestUtils.createRenderer();
         shallowRenderer.render(<CalendarSelection pending={true} modifier='test'/>);
@@ -17,14 +17,14 @@ describe('The CalendarSelection Component', function () {
 
     it('should render the right element', () => {
         expect(this.renderedComponent.type).toBe('div');
-        expect(this.spy).toHaveBeenCalledWith({
+        expect(this.spyCx).toHaveBeenCalledWith({
             states: {
                 pending: true
             },
             modifiers: {
                 test: true
-            }
-        })
+            },
+        });
         expect(this.renderedComponent.props.className).toEqual('my-class');
     });
 });
