@@ -33,6 +33,29 @@ describe('The CalendarDate Component', function () {
         this.renderedComponent = this.shallowRenderer.getRenderOutput();
     }.bind(this);
 
+    var useDocumentRenderer = function () {
+        const renderedTable = TestUtils.renderIntoDocument(<table><tbody><CalendarDate
+            date={this.date}
+            firstOfMonth={this.firstOfMonth}
+            dateRangesForDate={function () {
+                    return {
+                        count: function () {
+                            return 2;
+                        },
+                        getIn: function (data) {
+                            if(data[0] === 0) {
+                                return '#333';
+                            }
+                            return '#444';
+                        },
+                    }
+                }}
+            onSelectDate={this.selectDateSpy}
+            onHighlightDate={this.highlightDateSpy}
+            /></tbody></table>);
+        this.renderedComponent =  TestUtils.findRenderedDOMComponentWithTag(renderedTable, 'td');
+    }.bind(this);
+
     beforeEach(() => {
         this.spyCx = spyOn(CalendarDate.prototype.__reactAutoBindMap, 'cx').and.returnValue('my-class');
         this.date = moment(new Date());
@@ -77,31 +100,12 @@ describe('The CalendarDate Component', function () {
     describe('handles touch events', () => {
 
         beforeEach( () => {
-            this.renderedComponent = TestUtils.renderIntoDocument(<table><tbody><CalendarDate
-                date={this.date}
-                firstOfMonth={this.firstOfMonth}
-                dateRangesForDate={function () {
-                    return {
-                        count: function () {
-                            return 2;
-                        },
-                        getIn: function (data) {
-                            if(data[0] === 0) {
-                                return '#333';
-                            }
-                            return '#444';
-                        },
-                    }
-                }}
-                onSelectDate={this.selectDateSpy}
-                onHighlightDate={this.highlightDateSpy}
-                /></tbody></table>);
-            this.node =  TestUtils.findRenderedDOMComponentWithTag(this.renderedComponent, 'td');
+            useDocumentRenderer();
         });
 
 
         it('by calling props.onHighlightDate after an interaction', () => {
-            TestUtils.Simulate.touchStart(this.node);
+            TestUtils.Simulate.touchStart(this.renderedComponent);
             var evt = document.createEvent('CustomEvent');
             evt.initCustomEvent('touchend', false, false, null);
             document.dispatchEvent(evt);
@@ -109,7 +113,7 @@ describe('The CalendarDate Component', function () {
         });
 
         it('by calling props.onSelectDate after an interaction', () => {
-            TestUtils.Simulate.touchStart(this.node);
+            TestUtils.Simulate.touchStart(this.renderedComponent);
             var evt = document.createEvent('CustomEvent');
             evt.initCustomEvent('touchend', false, false, null);
             document.dispatchEvent(evt);
