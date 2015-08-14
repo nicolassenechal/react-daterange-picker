@@ -18,6 +18,7 @@ describe('The CalendarDate Component', function () {
         let d = moment(new Date());
         let firstOfMonth = moment(new Date());
         this.selectDateSpy = jasmine.createSpy();
+        this.highlightDateSpy = jasmine.createSpy();
 
         this.shallowRenderer.render(<CalendarDate
             date={d}
@@ -33,6 +34,7 @@ describe('The CalendarDate Component', function () {
                 }
             }}
             onSelectDate={this.selectDateSpy}
+            onHighlightDate={this.highlightDateSpy}
         />);
         this.renderedComponent = this.shallowRenderer.getRenderOutput();
     });
@@ -105,7 +107,7 @@ describe('The CalendarDate Component', function () {
                     }
                 }}
                 onSelectDate={this.selectDateSpy}
-                />);
+            />);
             this.renderedComponent = this.shallowRenderer.getRenderOutput();
             expect(this.renderedComponent.props.style.borderLeftColor).toEqual('#29');
             expect(this.renderedComponent.props.style.borderRightColor).toEqual('#3a');
@@ -116,12 +118,48 @@ describe('The CalendarDate Component', function () {
 
     describe('handles touch events', () => {
 
-        it('by calling props.onHighlightDate after an interaction', () => {
+        beforeEach( () => {
+            let d = moment(new Date());
+            let firstOfMonth = moment(new Date());
+            this.selectDateSpy = jasmine.createSpy();
 
+            this.renderedComponent = TestUtils.renderIntoDocument(<table><tbody><CalendarDate
+                date={d}
+                firstOfMonth={firstOfMonth}
+                dateRangesForDate={function () {
+                    return {
+                        count: function () {
+                            return 2;
+                        },
+                        getIn: function (data) {
+                            if(data[0] === 0) {
+                                return '#333';
+                            }
+                            return '#444';
+                        },
+                    }
+                }}
+                onSelectDate={this.selectDateSpy}
+                onHighlightDate={this.highlightDateSpy}
+                /></tbody></table>);
+            this.node =  TestUtils.findRenderedDOMComponentWithTag(this.renderedComponent, 'td');
+        });
+
+
+        it('by calling props.onHighlightDate after an interaction', () => {
+            TestUtils.Simulate.touchStart(this.node);
+            var evt = document.createEvent('CustomEvent');
+            evt.initCustomEvent('touchend', false, false, null);
+            document.dispatchEvent(evt);
+            expect(this.highlightDateSpy).toHaveBeenCalled();
         });
 
         it('by calling props.onSelectDate after an interaction', () => {
-
+            TestUtils.Simulate.touchStart(this.node);
+            var evt = document.createEvent('CustomEvent');
+            evt.initCustomEvent('touchend', false, false, null);
+            document.dispatchEvent(evt);
+            expect(this.selectDateSpy).toHaveBeenCalled();
         });
 
     });
