@@ -5,6 +5,7 @@ import CalendarDate from '../CalendarDate';
 
 import CalendarDatePeriod from '../CalendarDatePeriod';
 import CalendarHighlight from '../CalendarHighlight';
+import CalendarSelection from '../CalendarSelection';
 import BemMixin from '../../utils/BemMixin';
 
 const TestUtils = React.addons.TestUtils;
@@ -37,7 +38,14 @@ describe('The CalendarDate Component', function () {
             onHighlightDate={this.highlightDateSpy}
             onUnHighlightDate={this.unHighlightDateSpy}
             isHighlightedDate={props.isHighlightedDate || false }
-            />
+            isSelectedDate={props.isSelectedDate || false }
+            isSelectedRangeStart={props.isSelectedRangeStart || false }
+            isSelectedRangeEnd={props.isSelectedRangeEnd || false }
+            isHighlightedRangeStart={props.isHighlightedRangeStart || false }
+            isHighlightedRangeEnd={props.isHighlightedRangeEnd || false }
+            isInSelectedRange={props.isInSelectedRange || false }
+            isInHighlightedRange={props.isInHighlightedRange || false }
+        />
     }.bind(this);
 
     const useShallowRenderer = function (props) {
@@ -177,12 +185,79 @@ describe('The CalendarDate Component', function () {
     });
 
     describe('has a selection widget', () => {
-        it('which shows for one of many reasons', () => {
+        it('with a modifier prop of single if props.isSelectedDate is true and others false', () => {
+            useShallowRenderer({isSelectedDate: true});
+            expect(this.renderedComponent.props.children[3]).toEqual(
+                <CalendarSelection modifier='single' pending={false} />
+            );
+        });
 
+        it('with a modifier prop of single if props.isSelectedRangeStart, props.isSelectedRangeEnd are true and others false', () => {
+            useShallowRenderer({isSelectedRangeStart: true, isSelectedRangeEnd: true});
+            expect(this.renderedComponent.props.children[3]).toEqual(
+                <CalendarSelection modifier='single' pending={false} />
+            );
+        });
+
+        it('with a modifier prop of single if props.isHighlightedRangeStart, props.isHighlightedRangeEnd are true and others false', () => {
+            useShallowRenderer({isHighlightedRangeStart: true, isHighlightedRangeEnd: true});
+            expect(this.renderedComponent.props.children[3]).toEqual(
+                <CalendarSelection modifier='single' pending={false} />
+            );
+        });
+
+        it('with a modifier prop of start if props.isSelectedRangeStart is true and others false', () => {
+            useShallowRenderer({isSelectedRangeStart: true, isSelectedRangeEnd: false});
+            expect(this.renderedComponent.props.children[3]).toEqual(
+                <CalendarSelection modifier='start' pending={false} />
+            );
+        });
+
+        it('with a modifier prop of start if props.isHighlightedRangeStart is true and others false', () => {
+            useShallowRenderer({isHighlightedRangeStart: true, isHighlightedRangeEnd: false});
+            expect(this.renderedComponent.props.children[3]).toEqual(
+                <CalendarSelection modifier='start' pending={false} />
+            );
+        });
+
+        it('with a modifier prop of end if props.isSelectedRangeEnd is true and others false', () => {
+            useShallowRenderer({isSelectedRangeEnd: true, isSelectedRangeStart: false});
+            expect(this.renderedComponent.props.children[3]).toEqual(
+                <CalendarSelection modifier='end' pending={false} />
+            );
+        });
+
+        it('with a modifier prop of end if props.isHighlightedRangeEnd is true and others false', () => {
+            useShallowRenderer({isHighlightedRangeEnd: true, isHighlightedRangeStart: false});
+            expect(this.renderedComponent.props.children[3]).toEqual(
+                <CalendarSelection modifier='end' pending={false} />
+            );
+        });
+
+        it('with a modifier prop of segment if props.isInSelectedRange is true and others false', () => {
+            useShallowRenderer({isInSelectedRange: true});
+            expect(this.renderedComponent.props.children[3]).toEqual(
+                <CalendarSelection modifier='segment' pending={false} />
+            );
+        });
+
+        it('with a modifier prop of segment if props.isInHighlightedRange is true and others false', () => {
+            useShallowRenderer({isInHighlightedRange: true});
+            expect(this.renderedComponent.props.children[3]).toEqual(
+                <CalendarSelection modifier='segment' pending={true} />
+            );
+        });
+
+        it('with a pending prop of true if props.isInHighlightedRange is true and any setting showing the CalendarSelection widget', () => {
+            useShallowRenderer({isInHighlightedRange: true, isSelectedDate: true});
+            expect(this.renderedComponent.props.children[3]).toEqual(
+                <CalendarSelection modifier='single' pending={true} />
+            );
         });
 
         it('which does not show otherwise', ()  => {
-
+            useShallowRenderer();
+            expect(this.renderedComponent.props.children[3]).toEqual(null);
         });
     });
 
