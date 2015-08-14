@@ -12,7 +12,7 @@ const TestUtils = React.addons.TestUtils;
 
 describe('The CalendarDate Component', function () {
 
-    const getCalendarDate = function (props) {
+    const getCalendarDate = (props) => {
 
         if (!props) {
             props = {};
@@ -46,20 +46,20 @@ describe('The CalendarDate Component', function () {
             isInSelectedRange={props.isInSelectedRange || false }
             isInHighlightedRange={props.isInHighlightedRange || false }
         />
-    }.bind(this);
+    };
 
-    const useShallowRenderer = function (props) {
+    const useShallowRenderer = (props) => {
         this.shallowRenderer = TestUtils.createRenderer();
         this.shallowRenderer.render(getCalendarDate(props));
         this.renderedComponent = this.shallowRenderer.getRenderOutput();
-    }.bind(this);
+    };
 
-    const useDocumentRenderer = function (props) {
+    const useDocumentRenderer = (props) => {
         const renderedTable = TestUtils.renderIntoDocument(<table>
             <tbody>{getCalendarDate(props)}</tbody>
         </table>);
         this.renderedComponent = TestUtils.findRenderedDOMComponentWithTag(renderedTable, 'td');
-    }.bind(this);
+    };
 
     beforeEach(() => {
         this.spyCx = spyOn(CalendarDate.prototype.__reactAutoBindMap, 'cx').and.returnValue('my-class');
