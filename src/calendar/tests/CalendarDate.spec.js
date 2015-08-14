@@ -1,8 +1,9 @@
 import React from 'react/addons';
 import moment from 'moment';
 
-import CalendarDate from '../CalendarDate.jsx';
+import CalendarDate from '../CalendarDate';
 
+import CalendarDatePeriod from '../CalendarDatePeriod';
 import BemMixin from '../../utils/BemMixin';
 
 const TestUtils = React.addons.TestUtils;
@@ -145,11 +146,24 @@ describe('The CalendarDate Component', function () {
     describe('handles half days', () => {
 
         it('by creating calendar date period when there is more than one period', () => {
-
+            useShallowRenderer(2);
+            expect(this.renderedComponent.props.children[0]).toEqual(
+                <div className='my-class'>
+                    <CalendarDatePeriod period='am' color='#333'/>
+                    <CalendarDatePeriod period='pm' color='#444'/>
+                </div>
+            );
         });
 
-        it('by creating ca simple div when there is only one period', () => {
-
+        it('by creating a simple div when there is only one period', () => {
+            useShallowRenderer(1);
+            const bg = {
+                backgroundColor: '#333'
+            };
+            expect(this.renderedComponent.props.children[1]).toEqual(
+                <div className='my-class' style={bg}>
+                </div>
+            );
         });
     });
 
