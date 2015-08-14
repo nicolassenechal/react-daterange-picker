@@ -28,6 +28,7 @@ describe('The CalendarDate Component', function () {
             }}
             onSelectDate={this.selectDateSpy}
             onHighlightDate={this.highlightDateSpy}
+            onUnHighlightDate={this.unHighlightDateSpy}
         />
     }.bind(this);
 
@@ -48,6 +49,7 @@ describe('The CalendarDate Component', function () {
         this.firstOfMonth = moment(new Date());
         this.selectDateSpy = jasmine.createSpy();
         this.highlightDateSpy = jasmine.createSpy();
+        this.unHighlightDateSpy = jasmine.createSpy();
     });
 
     it('creates the right element', () => {
@@ -106,20 +108,36 @@ describe('The CalendarDate Component', function () {
 
     describe('handles mouse events', () => {
 
-        it('by calling props.onHighlightDate after a mouse enter', () => {
+        //MouseEnter and MouseLeave are buggy. Should be fixed in React#0.14
+        //Workaround as suggested from https://github.com/facebook/react/issues/1297
 
+
+        beforeEach( () => {
+            useDocumentRenderer();
+        });
+
+        it('by calling props.onHighlightDate after a mouse enter', () => {
+            TestUtils.SimulateNative.mouseOver(this.renderedComponent);
+            expect(this.highlightDateSpy).toHaveBeenCalledWith(this.date);
         });
 
         it('by calling props.onSelectDate after mouse down + mouse leave', () => {
-
+            TestUtils.Simulate.mouseDown(this.renderedComponent);
+            TestUtils.SimulateNative.mouseOut(this.renderedComponent);
+            expect(this.selectDateSpy).toHaveBeenCalledWith(this.date);
         });
 
-        it('by calling props.onHighlightDate after a mouse leave', () => {
-
+        it('by calling props.onUnHighlightDate after a mouse leave', () => {
+            TestUtils.SimulateNative.mouseOut(this.renderedComponent);
+            expect(this.unHighlightDateSpy).toHaveBeenCalledWith(this.date);
         });
 
-        it('by calling props.onSelectDate after mouse up', () => {
-
+        it('by calling props.onSelectDate after mouse down + mouse up', () => {
+            TestUtils.Simulate.mouseDown(this.renderedComponent);
+            var evt = document.createEvent('CustomEvent');
+            evt.initCustomEvent('mouseup', false, false, null);
+            document.dispatchEvent(evt);
+            expect(this.selectDateSpy).toHaveBeenCalledWith(this.date);
         });
 
     });
