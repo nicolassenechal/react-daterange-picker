@@ -5,31 +5,25 @@ import CalendarDate from '../CalendarDate.jsx';
 
 import BemMixin from '../../utils/BemMixin';
 
-
 const TestUtils = React.addons.TestUtils;
 
 describe('The CalendarDate Component', function () {
 
-    beforeEach(() => {
-        this.spyCx = spyOn(CalendarDate.prototype.__reactAutoBindMap, 'cx').and.returnValue('my-class');
-
+    var useShallowRenderer = function (count) {
         this.shallowRenderer = TestUtils.createRenderer();
-
-        let d = moment(new Date());
-        let firstOfMonth = moment(new Date());
-        this.selectDateSpy = jasmine.createSpy();
-        this.highlightDateSpy = jasmine.createSpy();
-
         this.shallowRenderer.render(<CalendarDate
-            date={d}
-            firstOfMonth={firstOfMonth}
+            date={this.date}
+            firstOfMonth={this.firstOfMonth}
             dateRangesForDate={function () {
                 return {
                     count: function () {
-                        return 5;
+                        return count || 1;
                     },
-                    getIn: function () {
-                        return '#333';
+                    getIn: function (data) {
+                        if(data[0] === 0) {
+                            return '#333';
+                        }
+                        return '#444';
                     },
                 }
             }}
@@ -37,13 +31,23 @@ describe('The CalendarDate Component', function () {
             onHighlightDate={this.highlightDateSpy}
         />);
         this.renderedComponent = this.shallowRenderer.getRenderOutput();
+    }.bind(this);
+
+    beforeEach(() => {
+        this.spyCx = spyOn(CalendarDate.prototype.__reactAutoBindMap, 'cx').and.returnValue('my-class');
+        this.date = moment(new Date());
+        this.firstOfMonth = moment(new Date());
+        this.selectDateSpy = jasmine.createSpy();
+        this.highlightDateSpy = jasmine.createSpy();
     });
 
     it('creates the right element', () => {
+        useShallowRenderer();
         expect(this.renderedComponent.type).toBe('td');
     });
 
     it('creates the right className', () => {
+        useShallowRenderer();
         //TODO: Test better modifiers and states
         expect(this.spyCx).toHaveBeenCalledWith({
             element: 'Date',
@@ -56,59 +60,13 @@ describe('The CalendarDate Component', function () {
     describe('creates the right style', () => {
 
         it('when numStyles is 1', () => {
-
-            let d = moment(new Date());
-            let firstOfMonth = moment(new Date());
-            this.selectDateSpy = jasmine.createSpy();
-
-             this.shallowRenderer.render(<CalendarDate
-                date={d}
-                firstOfMonth={firstOfMonth}
-                dateRangesForDate={function () {
-                    return {
-                        count: function () {
-                            return 1;
-                        },
-                        getIn: function (data) {
-                            if(data[0] === 0) {
-                                return '#333';
-                            }
-                            return '#444';
-                        },
-                    }
-                }}
-                onSelectDate={this.selectDateSpy}
-            />);
-            this.renderedComponent = this.shallowRenderer.getRenderOutput();
+            useShallowRenderer();
             expect(this.renderedComponent.props.style.borderLeftColor).toEqual('#29');
             expect(this.renderedComponent.props.style.borderRightColor).toEqual('#29');
         });
 
-        it('when numStyles is 1', () => {
-
-            let d = moment(new Date());
-            let firstOfMonth = moment(new Date());
-            this.selectDateSpy = jasmine.createSpy();
-
-            this.shallowRenderer.render(<CalendarDate
-                date={d}
-                firstOfMonth={firstOfMonth}
-                dateRangesForDate={function () {
-                    return {
-                        count: function () {
-                            return 2;
-                        },
-                        getIn: function (data) {
-                            if(data[0] === 0) {
-                                return '#333';
-                            }
-                            return '#444';
-                        },
-                    }
-                }}
-                onSelectDate={this.selectDateSpy}
-            />);
-            this.renderedComponent = this.shallowRenderer.getRenderOutput();
+        it('when numStyles is 2', () => {
+            useShallowRenderer(2);
             expect(this.renderedComponent.props.style.borderLeftColor).toEqual('#29');
             expect(this.renderedComponent.props.style.borderRightColor).toEqual('#3a');
         });
@@ -119,13 +77,9 @@ describe('The CalendarDate Component', function () {
     describe('handles touch events', () => {
 
         beforeEach( () => {
-            let d = moment(new Date());
-            let firstOfMonth = moment(new Date());
-            this.selectDateSpy = jasmine.createSpy();
-
             this.renderedComponent = TestUtils.renderIntoDocument(<table><tbody><CalendarDate
-                date={d}
-                firstOfMonth={firstOfMonth}
+                date={this.date}
+                firstOfMonth={this.firstOfMonth}
                 dateRangesForDate={function () {
                     return {
                         count: function () {
