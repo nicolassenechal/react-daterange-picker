@@ -46,6 +46,7 @@ describe('The CalendarDate Component', function () {
             isInSelectedRange={props.isInSelectedRange || false }
             isInHighlightedRange={props.isInHighlightedRange || false }
             isToday={props.isToday || false }
+            isDisabled={props.isDisabled || false }
         />
     };
 
@@ -81,7 +82,7 @@ describe('The CalendarDate Component', function () {
         it('by defininig the expected classing', () => {
             useShallowRenderer();
             expect(this.renderedComponent.props.className).toEqual('my-class');
-        })
+        });
 
         it('by calling cx with a Date element', () => {
             useShallowRenderer();
@@ -172,6 +173,100 @@ describe('The CalendarDate Component', function () {
             });
         });
 
+        describe('by setting the expected bem states', () => {
+
+            it('when the isDisabled prop is passed in', () => {
+                useShallowRenderer({
+                    isDisabled: true,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: jasmine.any(Object),
+                    states: {disabled: true, highlighted: jasmine.any(Boolean), selected: jasmine.any(Boolean)},
+                });
+            });
+
+            it('when the isDisabled prop is not passed in', () => {
+                useShallowRenderer({
+                    isDisabled: false,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: jasmine.any(Object),
+                    states: {disabled: false, highlighted: jasmine.any(Boolean), selected: jasmine.any(Boolean)},
+                });
+            });
+
+            it('when the isHighlightedDate prop is passed in', () => {
+                useShallowRenderer({
+                    isHighlightedDate: true,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: jasmine.any(Object),
+                    states: {disabled: jasmine.any(Boolean), highlighted: true, selected: jasmine.any(Boolean)},
+                });
+            });
+
+            it('when the isHighlightedDate prop is not passed in', () => {
+                useShallowRenderer({
+                    isHighlightedDate: false,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: jasmine.any(Object),
+                    states: {disabled: jasmine.any(Boolean), highlighted: false, selected: jasmine.any(Boolean)},
+                });
+            });
+
+            it('when the isSelectedDate prop is passed in', () => {
+                useShallowRenderer({
+                    isSelectedDate: true,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: jasmine.any(Object),
+                    states: {disabled: jasmine.any(Boolean), highlighted: jasmine.any(Boolean), selected: true},
+                });
+            });
+
+            it('when the isInSelectedRange prop is passed in', () => {
+                useShallowRenderer({
+                    isInSelectedRange: true,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: jasmine.any(Object),
+                    states: {disabled: jasmine.any(Boolean), highlighted: jasmine.any(Boolean), selected: true},
+                });
+            });
+
+            it('when the isInHighlightedRange prop is passed in', () => {
+                useShallowRenderer({
+                    isInHighlightedRange: true,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: jasmine.any(Object),
+                    states: {disabled: jasmine.any(Boolean), highlighted: jasmine.any(Boolean), selected: true},
+                });
+            });
+
+            it('when the isSelectedDate, isInSelectedRange, isInHighlightedRange props are not passed in', () => {
+                useShallowRenderer({
+                    isSelectedDate: false,
+                    isInSelectedRange: false,
+                    isInHighlightedRange: false,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: jasmine.any(Object),
+                    states: {disabled: jasmine.any(Boolean), highlighted: jasmine.any(Boolean), selected: false},
+                });
+            });
+
+        });
+
     });
 
     describe('creates the right style', () => {
@@ -216,7 +311,6 @@ describe('The CalendarDate Component', function () {
 
         //MouseEnter and MouseLeave are buggy. Should be fixed in React#0.14
         //Workaround as suggested from https://github.com/facebook/react/issues/1297
-
 
         beforeEach(() => {
             useDocumentRenderer();
