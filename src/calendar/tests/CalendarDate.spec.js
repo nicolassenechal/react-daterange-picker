@@ -19,8 +19,8 @@ describe('The CalendarDate Component', function () {
         }
 
         return <CalendarDate
-            date={this.date}
-            firstOfMonth={this.firstOfMonth}
+            date={props.date || this.date}
+            firstOfMonth={props.firstOfMonth || this.firstOfMonth}
             dateRangesForDate={function () {
                 return {
                     count: function () {
@@ -45,6 +45,7 @@ describe('The CalendarDate Component', function () {
             isHighlightedRangeEnd={props.isHighlightedRangeEnd || false }
             isInSelectedRange={props.isInSelectedRange || false }
             isInHighlightedRange={props.isInHighlightedRange || false }
+            isToday={props.isToday || false }
         />
     };
 
@@ -75,15 +76,102 @@ describe('The CalendarDate Component', function () {
         expect(this.renderedComponent.type).toBe('td');
     });
 
-    it('creates the right className', () => {
-        useShallowRenderer();
-        //TODO: Test better modifiers and states
-        expect(this.spyCx).toHaveBeenCalledWith({
-            element: 'Date',
-            modifiers: jasmine.any(Object),
-            states: jasmine.any(Object),
+    describe('sets the correct class', () => {
+
+        it('by defininig the expected classing', () => {
+            useShallowRenderer();
+            expect(this.renderedComponent.props.className).toEqual('my-class');
+        })
+
+        it('by calling cx with a Date element', () => {
+            useShallowRenderer();
+            expect(this.spyCx).toHaveBeenCalledWith({
+                element: 'Date',
+                modifiers: jasmine.any(Object),
+                states: jasmine.any(Object),
+            });
         });
-        expect(this.renderedComponent.props.className).toEqual('my-class');
+
+        describe('by setting the expected bem modifiers', () => {
+
+            it('when the provided date is today', () => {
+                useShallowRenderer({
+                    isToday: true
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: {today: true, weekend: jasmine.any(Boolean), otherMonth: jasmine.any(Boolean)},
+                    states: jasmine.any(Object),
+                });
+            });
+
+
+            it('when the provided date is not today', () => {
+                useShallowRenderer({
+                    isToday: false,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: {today: false, weekend: jasmine.any(Boolean), otherMonth: jasmine.any(Boolean)},
+                    states: jasmine.any(Object),
+                });
+            });
+
+            it('when the provided date is over the weekend', () => {
+                var nextSunday = moment().day(7);
+                useShallowRenderer({
+                    date: nextSunday,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: {today: jasmine.any(Boolean), weekend: true, otherMonth: jasmine.any(Boolean)},
+                    states: jasmine.any(Object),
+                });
+            });
+
+
+            it('when the provided date is not over the weekend', () => {
+                let nextMonday = moment().day(8);
+                useShallowRenderer({
+                    date: nextMonday,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: {today: jasmine.any(Boolean), weekend: false, otherMonth: jasmine.any(Boolean)},
+                    states: jasmine.any(Object),
+                });
+            });
+
+            it('when the provided date is during the same month', () => {
+                let date = moment().date(8).month(3),
+                    firstOfMonth = moment().date(1).month(3);
+                useShallowRenderer({
+                    date: date,
+                    firstOfMonth: firstOfMonth,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: {today: jasmine.any(Boolean), weekend: jasmine.any(Boolean), otherMonth: false},
+                    states: jasmine.any(Object),
+                });
+            });
+
+
+            it('when the provided date is not during the same month', () => {
+                let date = moment().date(8).month(3),
+                    firstOfMonth = moment().date(1).month(43);
+                useShallowRenderer({
+                    date: date,
+                    firstOfMonth: firstOfMonth,
+                });
+                expect(this.spyCx).toHaveBeenCalledWith({
+                    element: jasmine.any(String),
+                    modifiers: {today: jasmine.any(Boolean), weekend: jasmine.any(Boolean), otherMonth: true},
+                    states: jasmine.any(Object),
+                });
+            });
+        });
+
     });
 
     describe('creates the right style', () => {
