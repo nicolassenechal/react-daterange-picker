@@ -19,8 +19,8 @@ describe('The CalendarDate Component', function () {
         }
 
         return <CalendarDate
-            date={props.date || this.date}
-            firstOfMonth={props.firstOfMonth || this.firstOfMonth}
+            date={props.date || moment()}
+            firstOfMonth={props.firstOfMonth || moment()}
             dateRangesForDate={function () {
                 return {
                     count: function () {
@@ -65,8 +65,6 @@ describe('The CalendarDate Component', function () {
 
     beforeEach(() => {
         this.spyCx = spyOn(CalendarDate.prototype.__reactAutoBindMap, 'cx').and.returnValue('my-class');
-        this.date = moment(new Date());
-        this.firstOfMonth = moment(new Date());
         this.selectDateSpy = jasmine.createSpy();
         this.highlightDateSpy = jasmine.createSpy();
         this.unHighlightDateSpy = jasmine.createSpy();
@@ -313,7 +311,10 @@ describe('The CalendarDate Component', function () {
         //Workaround as suggested from https://github.com/facebook/react/issues/1297
 
         beforeEach(() => {
-            useDocumentRenderer();
+            this.date = moment();
+            useDocumentRenderer({
+                date: this.date
+            });
         });
 
         it('by calling props.onHighlightDate after a mouse enter', () => {
