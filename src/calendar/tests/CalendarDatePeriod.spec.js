@@ -1,8 +1,6 @@
 import React from 'react/addons';
 import CalendarDatePeriod from '../CalendarDatePeriod.jsx';
 
-import BemMixin from '../../utils/BemMixin';
-
 const TestUtils = React.addons.TestUtils;
 
 describe('The CalendarDatePeriod Component', function () {

@@ -1,8 +1,6 @@
 import React from 'react/addons';
 import CalendarSelection from '../CalendarSelection.jsx';
 
-import BemMixin from '../../utils/BemMixin';
-
 const TestUtils = React.addons.TestUtils;
 
 describe('The CalendarSelection Component', function () {

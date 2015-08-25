@@ -6,7 +6,6 @@ import CalendarDate from '../CalendarDate';
 import CalendarDatePeriod from '../CalendarDatePeriod';
 import CalendarHighlight from '../CalendarHighlight';
 import CalendarSelection from '../CalendarSelection';
-import BemMixin from '../../utils/BemMixin';
 
 const TestUtils = React.addons.TestUtils;
 

@@ -1,9 +1,6 @@
 import React from 'react/addons';
 import CalendarHighlight from '../CalendarHighlight.jsx';
 
-import BemMixin from '../../utils/BemMixin';
-
-
 const TestUtils = React.addons.TestUtils;
 
 describe('The CalendarHighlight Component', function () {
