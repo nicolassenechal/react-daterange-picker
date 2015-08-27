@@ -42,6 +42,7 @@ describe('The CalendarMonth Component', function () {
     this.shallowRenderer.render(getCalendarMonth(props));
     this.renderedComponent = this.shallowRenderer.getRenderOutput();
     this.container = this.renderedComponent.props.children[0];
+    this.table = this.renderedComponent.props.children[1];
   };
 
   const useDocumentRenderer = (props) => {
@@ -193,27 +194,34 @@ describe('The CalendarMonth Component', function () {
     describe('has a table', () => {
 
       it('which has the expected className', () => {
-
+        useShallowRenderer();
+        expect(this.table.type).toBe('table');
+        expect(this.table.props.className).toEqual('my-class');
+        expect(this.spyCx).toHaveBeenCalledWith({
+          element: 'MonthDates',
+        });
       });
 
-      describe('whose head contains day information', () => {
+      it('whose head contains day information', () => {
+        expect(this.table.props.children[0].props.children).toEqual(<tr className='my-class'>
+          <th className='my-class' key='Sunday,Sun' scope='col'><abbr title='Sunday'>Sun</abbr></th>
+          <th className='my-class' key='Monday,Mon' scope='col'><abbr title='Monday'>Mon</abbr></th>
+          <th className='my-class' key='Tuesday,Tue' scope='col'><abbr title='Tuesday'>Tue</abbr></th>
+          <th className='my-class' key='Wednesday,Wed' scope='col'><abbr title='Wednesday'>Wed</abbr></th>
+          <th className='my-class' key='Thursday,Thu' scope='col'><abbr title='Thursday'>Thu</abbr></th>
+          <th className='my-class' key='Friday,Fri' scope='col'><abbr title='Friday'>Fri</abbr></th>
+          <th className='my-class' key='Saturday,Sat' scope='col'><abbr title='Saturday'>Sat</abbr></th>
+        </tr>);
+      });
 
-        it('has the correct type and class', () => {
-
-        });
-
-        it('contains the expected elements', () => {
-
-        });
-
+      it('which has a body containing the weeks', () =>{
+        expect(this.table.props.children[1].props.children.length).toBeGreaterThan(3);
+        expect(this.table.props.children[1].props.children[0].type).toEqual('tr');
+        expect(this.table.props.children[1].props.children[1].props.children.length).toBe(7);
+        expect(this.table.props.children[1].props.children[1].props.children[0].type).toBe(CalendarDate);
       });
 
     });
-
-    it('has a body containing the weeks', () =>{
-
-    });
-
 
   });
 });
