@@ -16,7 +16,7 @@ describe('The CalendarMonth Component', function () {
     return (<CalendarMonth
       firstOfWeek={0}
       firstOfMonth={this.firstOfMonth}
-      enabledRange={moment.range()}
+      enabledRange={moment.range(moment(), moment().add(3, 'years'))}
       dateComponent={CalendarDate}
       disableNavigation={props.disableNavigation || false}
       dateRangesForDate={function () {
@@ -124,10 +124,11 @@ describe('The CalendarMonth Component', function () {
         useDocumentRenderer({
           onMonthChange: onMonthChange,
         });
-        var select = TestUtils.scryRenderedDOMComponentsWithTag(this.renderedComponent, 'select')[0];
-        select.value = '1';
+        var select = TestUtils.scryRenderedDOMComponentsWithTag(this.renderedComponent, 'select')[0].getDOMNode();
+        var value = (select.value === '1') ? '2' : '1';
+        select.value = value;
         TestUtils.Simulate.change(select);
-        expect(onMonthChange).toHaveBeenCalled();
+        expect(onMonthChange).toHaveBeenCalledWith(parseInt(value, 10));
       });
 
     });
@@ -180,10 +181,11 @@ describe('The CalendarMonth Component', function () {
         useDocumentRenderer({
           onYearChange: onYearChange,
         });
-        var select = TestUtils.scryRenderedDOMComponentsWithTag(this.renderedComponent, 'select')[1];
-        select.value = '1';
+        var select = TestUtils.scryRenderedDOMComponentsWithTag(this.renderedComponent, 'select')[1].getDOMNode();
+        var value = (this.firstOfMonth.year() + 1).toString();
+        select.value = value;
         TestUtils.Simulate.change(select);
-        expect(onYearChange).toHaveBeenCalled();
+        expect(onYearChange).toHaveBeenCalledWith(parseInt(value, 10));
       });
 
     });
