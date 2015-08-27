@@ -13,9 +13,7 @@ describe('The CalendarDate Component', function () {
 
   const getCalendarDate = (props) => {
 
-    if (!props) {
-      props = {};
-    }
+    props = props || {};
 
     return (<CalendarDate
       date={props.date || moment()}
