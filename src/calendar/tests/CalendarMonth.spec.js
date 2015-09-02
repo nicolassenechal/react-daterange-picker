@@ -50,7 +50,9 @@ describe('The CalendarMonth Component', function () {
   };
 
   beforeEach(() => {
-    this.spyCx = spyOn(CalendarMonth.prototype.__reactAutoBindMap, 'cx').and.returnValue('my-class');
+    this.spyCx = spyOn(CalendarMonth.prototype.__reactAutoBindMap, 'cx').and.callFake( (data) => {
+      return data.element || 'my-class';
+    });
     this.firstOfMonth = moment();
   });
 
@@ -60,7 +62,7 @@ describe('The CalendarMonth Component', function () {
     expect(this.spyCx).toHaveBeenCalledWith({
       element: 'Month',
     });
-    expect(this.renderedComponent.props.className).toEqual('my-class');
+    expect(this.renderedComponent.props.className).toEqual('Month');
   });
 
   describe('has a label acting as a header', () => {
@@ -71,7 +73,7 @@ describe('The CalendarMonth Component', function () {
 
     it('which is a div with the correct class', () => {
       expect(this.container.type).toBe('div');
-      expect(this.container.props.className).toEqual('my-class');
+      expect(this.container.props.className).toEqual('MonthHeader');
       expect(this.spyCx).toHaveBeenCalledWith({
         element: 'MonthHeader',
       });
@@ -85,7 +87,7 @@ describe('The CalendarMonth Component', function () {
         const span = this.container.props.children[0];
 
         expect(span.type).toBe('span');
-        expect(span.props.className).toEqual('my-class');
+        expect(span.props.className).toEqual('MonthHeaderLabel');
         expect(this.spyCx).toHaveBeenCalledWith({
           element: 'MonthHeaderLabel',
           modifiers: {
@@ -116,7 +118,7 @@ describe('The CalendarMonth Component', function () {
           element: 'MonthHeaderSelect',
         });
         expect(select.props.value).toBe(this.firstOfMonth.month());
-        expect(select.props.className).toEqual('my-class');
+        expect(select.props.className).toEqual('MonthHeaderSelect');
         expect(select.props.children.length).toBe(12);
       });
 
@@ -142,7 +144,7 @@ describe('The CalendarMonth Component', function () {
         const span = this.container.props.children[2];
 
         expect(span.type).toBe('span');
-        expect(span.props.className).toEqual('my-class');
+        expect(span.props.className).toEqual('MonthHeaderLabel');
         expect(this.spyCx).toHaveBeenCalledWith({
           element: 'MonthHeaderLabel',
           modifiers: {
@@ -173,7 +175,7 @@ describe('The CalendarMonth Component', function () {
           element: 'MonthHeaderSelect',
         });
         expect(select.props.value).toBe(this.firstOfMonth.year());
-        expect(select.props.className).toEqual('my-class');
+        expect(select.props.className).toEqual('MonthHeaderSelect');
         expect(select.props.children.length).toBe(15);
       });
 
@@ -196,25 +198,26 @@ describe('The CalendarMonth Component', function () {
       it('which has the expected className', () => {
         useShallowRenderer();
         expect(this.table.type).toBe('table');
-        expect(this.table.props.className).toEqual('my-class');
+        expect(this.table.props.className).toEqual('MonthDates');
         expect(this.spyCx).toHaveBeenCalledWith({
           element: 'MonthDates',
         });
       });
 
       it('whose head contains day information', () => {
-        expect(this.table.props.children[0].props.children).toEqual(<tr className='my-class'>
-          <th className='my-class' key='Sunday,Sun' scope='col'><abbr title='Sunday'>Sun</abbr></th>
-          <th className='my-class' key='Monday,Mon' scope='col'><abbr title='Monday'>Mon</abbr></th>
-          <th className='my-class' key='Tuesday,Tue' scope='col'><abbr title='Tuesday'>Tue</abbr></th>
-          <th className='my-class' key='Wednesday,Wed' scope='col'><abbr title='Wednesday'>Wed</abbr></th>
-          <th className='my-class' key='Thursday,Thu' scope='col'><abbr title='Thursday'>Thu</abbr></th>
-          <th className='my-class' key='Friday,Fri' scope='col'><abbr title='Friday'>Fri</abbr></th>
-          <th className='my-class' key='Saturday,Sat' scope='col'><abbr title='Saturday'>Sat</abbr></th>
+        expect(this.table.props.children[0].props.children).toEqual(<tr className='Weekdays'>
+          <th className='WeekdayHeading' key='Sunday,Sun' scope='col'><abbr title='Sunday'>Sun</abbr></th>
+          <th className='WeekdayHeading' key='Monday,Mon' scope='col'><abbr title='Monday'>Mon</abbr></th>
+          <th className='WeekdayHeading' key='Tuesday,Tue' scope='col'><abbr title='Tuesday'>Tue</abbr></th>
+          <th className='WeekdayHeading' key='Wednesday,Wed' scope='col'><abbr title='Wednesday'>Wed</abbr></th>
+          <th className='WeekdayHeading' key='Thursday,Thu' scope='col'><abbr title='Thursday'>Thu</abbr></th>
+          <th className='WeekdayHeading' key='Friday,Fri' scope='col'><abbr title='Friday'>Fri</abbr></th>
+          <th className='WeekdayHeading' key='Saturday,Sat' scope='col'><abbr title='Saturday'>Sat</abbr></th>
         </tr>);
       });
 
-      it('which has a body containing the weeks', () =>{
+      it('which has a body containing the weeks', () => {
+        //TODO Very weak tests. Improve
         expect(this.table.props.children[1].props.children.length).toBeGreaterThan(3);
         expect(this.table.props.children[1].props.children[0].type).toEqual('tr');
         expect(this.table.props.children[1].props.children[1].props.children.length).toBe(7);
