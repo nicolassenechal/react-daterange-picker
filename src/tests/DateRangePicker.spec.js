@@ -85,7 +85,7 @@ describe('The DateRangePicker component', function () {
 
     it('the right one does not get disabled when we are not at the end of the permitted period', () => {
       useShallowRenderer({
-        maximumDate: new Date(2000, 9, 15),
+        maximumDate: new Date(2000, 6, 15),
         initialYear: 2000,
         initialMonth: 6,
       });
