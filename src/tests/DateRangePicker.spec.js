@@ -1,6 +1,8 @@
 import DateRangePicker from '../DateRangePicker.jsx';
 import PaginationArrow from '../PaginationArrow.jsx';
-
+import CalendarMonth from '../calendar/CalendarMonth.jsx';
+import moment from 'moment';
+import 'moment-range';
 
 import React from 'react/addons';
 
@@ -107,11 +109,152 @@ describe('The DateRangePicker component', function () {
 
   describe('contains CalendarMonth components', () => {
 
-    it('whose number is based on props.numberOfCalendars', () => {
+    describe('which number is', () => {
+      it('by default only one', () => {
+        useShallowRenderer();
+        expect(this.renderedComponent.props.children[1].length).toBe(1);
+        expect(this.renderedComponent.props.children[1][0].type).toBe(CalendarMonth);
+      });
+
+      it('otherwise a number equal to props.numberOfCalendars', () => {
+        useShallowRenderer({
+          numberOfCalendars: 3,
+        });
+        expect(this.renderedComponent.props.children[1].length).toBe(3);
+        expect(this.renderedComponent.props.children[1][0].type).toBe(CalendarMonth);
+      });
+    });
+
+    describe('for each component the value', () => {
+
+      describe('when it is a moment', () => {
+
+        it('is set to null if it is not included in the corresponding month', () => {
+          var value = moment('2003 01 01', 'YYYY MM DD');
+          useShallowRenderer({
+            initialYear: 2000,
+            initialMonth: 6,
+            value: value,
+            selectionType: 'single',
+            initialFromValue: false,
+          });
+          expect(this.renderedComponent.props.children[1][0].props.value).toBe(null);
+        });
+
+        it('otherwise it uses props.value', () => {
+          var value = moment('2000 06 05', 'YYYY MM DD');
+          useShallowRenderer({
+            initialYear: 2000,
+            initialMonth: 5,
+            value: value,
+            selectionType: 'single',
+            initialFromValue: false,
+          });
+          expect(this.renderedComponent.props.children[1][0].props.value).toBe(value);
+        });
+
+      });
+
+      describe('when it is a moment range', () => {
+
+        it('is set to null if it is not overlapping the corresponding month', () => {
+          var value = moment.range(moment('2003 01 01', 'YYYY MM DD'), moment('2004 01 01', 'YYYY MM DD'));
+          useShallowRenderer({
+            initialYear: 2000,
+            initialMonth: 6,
+            value: value,
+            selectionType: 'range',
+            initialFromValue: false,
+          });
+          expect(this.renderedComponent.props.children[1][0].props.value).toBe(null);
+        });
+
+        it('otherwise it uses props.value', () => {
+          var value = moment.range(moment('2000 04 01', 'YYYY MM DD'), moment('2000 09 01', 'YYYY MM DD'));
+          useShallowRenderer({
+            initialYear: 2000,
+            initialMonth: 6,
+            value: value,
+            selectionType: 'range',
+            initialFromValue: false,
+          });
+          expect(this.renderedComponent.props.children[1][0].props.value).toBe(value);
+        });
+
+      });
 
     });
 
-    it('which takes in a large number of attributes', () => {
+    describe('for each component the highlighted date', () => {
+
+      it('defaults to props.highlightedDate', () => {
+
+      });
+
+      it('is set to null if it is not a moment', () => {
+
+      });
+
+      it('is set to null if the current month does not include the date',  () => {
+
+      });
+
+    });
+
+    describe('for each component the highlighted range', () => {
+
+      it('defaults to props.highlightedRange', () => {
+
+      });
+
+      it('is set to null if it is not a moment range', () => {
+
+      });
+
+      it('is set to null if the current month does not include the date range',  () => {
+
+      });
+
+    });
+
+    describe('each component takes in a large number of other attributes', () => {
+
+      it('like props.bemBlock', () => {
+
+      });
+
+      it('like props.bemNamespace', () => {
+
+      });
+
+      it('like props.firstOfWeek', () => {
+
+      });
+
+
+    });
+
+    describe('each component is provided with a number of event handlers', () => {
+
+      it('onMonthChange', () => {
+
+      });
+
+      it('onYearChange', () => {
+
+      });
+
+      it('onSelectDate', () => {
+
+      });
+
+      it('onHighlightDate', () => {
+
+      });
+
+      it('onUnHighlightDate', () => {
+
+      });
 
     });
 
