@@ -187,32 +187,74 @@ describe('The DateRangePicker component', function () {
 
     describe('for each component the highlighted date', () => {
 
-      it('defaults to props.highlightedDate', () => {
-
-      });
-
       it('is set to null if it is not a moment', () => {
-
+        var highlightedDate = {};
+        useDocumentRenderer({
+          initialYear: 2000,
+          initialMonth: 6,
+        });
+        this.renderedComponent.highlightDate(highlightedDate);
+        var calendarMonthComponent = TestUtils.scryRenderedComponentsWithType(this.renderedComponent, CalendarMonth)[0];
+        expect(calendarMonthComponent.props.highlightedDate).toBe(null);
       });
 
-      it('is set to null if the current month does not include the date',  () => {
+      it('is set to null if the current month does not include the date', () => {
+        var highlightedDate = moment('2003 01 01', 'YYYY MM DD');
+        useDocumentRenderer({
+          initialYear: 2000,
+          initialMonth: 6,
+        });
+        this.renderedComponent.highlightDate(highlightedDate);
+        var calendarMonthComponent = TestUtils.scryRenderedComponentsWithType(this.renderedComponent, CalendarMonth)[0];
+        expect(calendarMonthComponent.props.highlightedDate).toBe(null);
+      });
 
+      it('is set to props.highlightedDate otherwise', () => {
+        var highlightedDate = moment('2000 07 05', 'YYYY MM DD');
+        useDocumentRenderer({
+          initialYear: 2000,
+          initialMonth: 6,
+        });
+        this.renderedComponent.highlightDate(highlightedDate);
+        var calendarMonthComponent = TestUtils.scryRenderedComponentsWithType(this.renderedComponent, CalendarMonth)[0];
+        expect(calendarMonthComponent.props.highlightedDate).toBe(highlightedDate);
       });
 
     });
 
     describe('for each component the highlighted range', () => {
 
-      it('defaults to props.highlightedRange', () => {
-
-      });
-
       it('is set to null if it is not a moment range', () => {
-
+        var highlightedRange = {};
+        useDocumentRenderer({
+          initialYear: 2000,
+          initialMonth: 6,
+        });
+        this.renderedComponent.highlightRange(highlightedRange);
+        var calendarMonthComponent = TestUtils.scryRenderedComponentsWithType(this.renderedComponent, CalendarMonth)[0];
+        expect(calendarMonthComponent.props.highlightedRange).toBe(null);
       });
 
-      it('is set to null if the current month does not include the date range',  () => {
+      it('is set to null if the current month does not include the date range', () => {
+        var highlightedRange = moment.range(moment('2003 01 01', 'YYYY MM DD'), moment('2004 01 01', 'YYYY MM DD'));
+        useDocumentRenderer({
+          initialYear: 2000,
+          initialMonth: 6,
+        });
+        this.renderedComponent.highlightRange(highlightedRange);
+        var calendarMonthComponent = TestUtils.scryRenderedComponentsWithType(this.renderedComponent, CalendarMonth)[0];
+        expect(calendarMonthComponent.props.highlightedRange).toBe(null);
+      });
 
+      it('defaults to props.highlightedRange', () => {
+        var highlightedRange = moment.range(moment('1999 01 01', 'YYYY MM DD'), moment('2004 01 01', 'YYYY MM DD'));
+        useDocumentRenderer({
+          initialYear: 2000,
+          initialMonth: 6,
+        });
+        this.renderedComponent.highlightRange(highlightedRange);
+        var calendarMonthComponent = TestUtils.scryRenderedComponentsWithType(this.renderedComponent, CalendarMonth)[0];
+        expect(calendarMonthComponent.props.highlightedRange).toBe(highlightedRange);
       });
 
     });
@@ -220,40 +262,69 @@ describe('The DateRangePicker component', function () {
     describe('each component takes in a large number of other attributes', () => {
 
       it('like props.bemBlock', () => {
-
+        useShallowRenderer({
+          bemBlock: 'test-bb',
+        });
+        expect(this.renderedComponent.props.children[1][0].props.bemBlock).toBe('test-bb');
       });
 
       it('like props.bemNamespace', () => {
-
+        useShallowRenderer({
+          bemNamespace: 'test-bn',
+        });
+        expect(this.renderedComponent.props.children[1][0].props.bemNamespace).toBe('test-bn');
       });
 
       it('like props.firstOfWeek', () => {
-
+        useShallowRenderer({
+          firstOfWeek: 0,
+        });
+        expect(this.renderedComponent.props.children[1][0].props.firstOfWeek).toBe(0);
       });
 
 
     });
 
-    describe('each component is provided with a number of event handlers', () => {
+    fdescribe('each component is provided with a number of event handlers', () => {
 
-      it('onMonthChange', () => {
-
+      it('onMonthChange calls #changeMonth', () => {
+        var spy = spyOn(DateRangePicker.prototype.__reactAutoBindMap, 'changeMonth');
+        useDocumentRenderer();
+        var calendarMonthComponent = TestUtils.scryRenderedComponentsWithType(this.renderedComponent, CalendarMonth)[0];
+        calendarMonthComponent.props.onMonthChange(5);
+        expect(spy).toHaveBeenCalled();
       });
 
-      it('onYearChange', () => {
-
+      it('onYearChange calls #changeYear', () => {
+        var spy = spyOn(DateRangePicker.prototype.__reactAutoBindMap, 'changeYear');
+        useDocumentRenderer();
+        var calendarMonthComponent = TestUtils.scryRenderedComponentsWithType(this.renderedComponent, CalendarMonth)[0];
+        calendarMonthComponent.props.onYearChange(2000);
+        expect(spy).toHaveBeenCalled();
       });
 
-      it('onSelectDate', () => {
-
+      it('onSelectDate calls #onSelectDate', () => {
+        var spy = spyOn(DateRangePicker.prototype.__reactAutoBindMap, 'onSelectDate');
+        useDocumentRenderer();
+        var calendarMonthComponent = TestUtils.scryRenderedComponentsWithType(this.renderedComponent, CalendarMonth)[0];
+        calendarMonthComponent.props.onSelectDate(moment());
+        expect(spy).toHaveBeenCalled();
       });
 
-      it('onHighlightDate', () => {
-
+      it('onHighlightDate calls #onHighlightDate', () => {
+        var spy = spyOn(DateRangePicker.prototype.__reactAutoBindMap, 'onHighlightDate');
+        useDocumentRenderer();
+        var calendarMonthComponent = TestUtils.scryRenderedComponentsWithType(this.renderedComponent, CalendarMonth)[0];
+        calendarMonthComponent.props.onHighlightDate(moment());
+        expect(spy).toHaveBeenCalled();
       });
 
-      it('onUnHighlightDate', () => {
-
+      it('onUnHighlightDate calls #onUnHighlightDate', () => {
+        var spy = spyOn(DateRangePicker.prototype.__reactAutoBindMap, 'onUnHighlightDate');
+        useDocumentRenderer();
+        var calendarMonthComponent = TestUtils.scryRenderedComponentsWithType(this.renderedComponent, CalendarMonth)[0];
+        calendarMonthComponent.props.onUnHighlightDate(moment());
+        expect(spy).toHaveBeenCalled();
       });
 
     });
