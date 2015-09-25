@@ -578,7 +578,6 @@ describe('The DateRangePicker component', function () {
             expect(this.spy).toHaveBeenCalledWith(date);
           });
 
-
         });
 
       });
@@ -586,6 +585,18 @@ describe('The DateRangePicker component', function () {
     });
 
     describe('#onUnHighlightDate', () => {
+
+      it('updates the highlightedDate state to null', () => {
+        useDocumentRenderer({
+          initialYear: 2000,
+          initialMonth: 6,
+        });
+        this.renderedComponent.setState({
+          highlightedDate: moment(),
+        });
+        this.renderedComponent.onUnHighlightDate();
+        expect(this.renderedComponent.state.highlightedDate).toBe(null);
+      });
 
     });
 
