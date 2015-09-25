@@ -644,6 +644,42 @@ describe('The DateRangePicker component', function () {
 
   });
 
+  describe('#componentWillReceiveProps', () => {
+
+    beforeEach( () => {
+      useDocumentRenderer({
+        initialYear: 2000,
+        initialMonth: 6,
+      });
+      spyOn(this.renderedComponent, 'render').and.callFake( () => {
+        return <div></div>;
+      });
+    });
+
+    it('updates state.dateStates if data provided in the props', () => {
+      var newDateStates = ['newDateStates'];
+      spyOn(this.renderedComponent, 'getDateStates').and.returnValue(newDateStates);
+      spyOn(this.renderedComponent, 'getEnabledRange').and.returnValue('newEnabledRange');
+      this.renderedComponent.setState({
+        dateStates: ['oldDateStates'],
+      });
+      this.renderedComponent.componentWillReceiveProps({});
+      expect(this.renderedComponent.state.dateStates).toBe(newDateStates);
+    });
+
+    it('updates state.enabledRange if data provided in the props', () => {
+      var newEnabledRange = moment.range(moment('2003 01 01', 'YYYY MM DD'), moment('2005 01 01', 'YYYY MM DD'));
+      spyOn(this.renderedComponent, 'getDateStates').and.returnValue(['newDateStates']);
+      spyOn(this.renderedComponent, 'getEnabledRange').and.returnValue(newEnabledRange);
+      this.renderedComponent.setState({
+        enabledRange: moment.range(moment('2003 01 01', 'YYYY MM DD'), moment('2004 01 01', 'YYYY MM DD')),
+      });
+      this.renderedComponent.componentWillReceiveProps({});
+      expect(this.renderedComponent.state.enabledRange).toBe(newEnabledRange);
+    });
+
+  });
+
 
 
 });
