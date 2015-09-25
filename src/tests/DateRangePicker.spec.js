@@ -3,6 +3,9 @@ import PaginationArrow from '../PaginationArrow.jsx';
 import CalendarMonth from '../calendar/CalendarMonth.jsx';
 import moment from 'moment';
 import 'moment-range';
+import isMomentRange from '../utils/isMomentRange.js';
+import areMomentRangesEqual from '../utils/areMomentRangesEqual.js';
+
 
 import React from 'react/addons';
 
@@ -477,6 +480,9 @@ describe('The DateRangePicker component', function () {
               spyOn(this.renderedComponent, 'highlightRange');
               this.renderedComponent.onSelectDate(this.date);
               expect(this.renderedComponent.highlightRange).toHaveBeenCalled();
+              var range = this.renderedComponent.highlightRange.calls.first().args[0];
+              expect(isMomentRange(range)).toBe(true);
+              expect(areMomentRangesEqual(range, moment.range(this.date, this.date))).toBe(true);
             });
 
           });
@@ -488,6 +494,94 @@ describe('The DateRangePicker component', function () {
     });
 
     describe('#onHighlightDate', () => {
+
+      describe('if props.selectionType is a single date', () => {
+        beforeEach( () => {
+          useDocumentRenderer({
+            initialYear: 2000,
+            initialMonth: 6,
+            selectionType: 'single',
+          });
+          this.spy = spyOn(this.renderedComponent, 'highlightDate');
+        });
+
+        it('if the date is disabled, it does not call #highlightDate', () => {
+          spyOn(this.renderedComponent, 'isDateDisabled').and.returnValue(true);
+          spyOn(this.renderedComponent, 'isDateSelectable').and.returnValue(true);
+          this.renderedComponent.onHighlightDate();
+          expect(this.spy).not.toHaveBeenCalled();
+        });
+
+        it('if the date is not selectable, it does not call #highlightDate', () => {
+          spyOn(this.renderedComponent, 'isDateDisabled').and.returnValue(false);
+          spyOn(this.renderedComponent, 'isDateSelectable').and.returnValue(false);
+          this.renderedComponent.onHighlightDate();
+          expect(this.spy).not.toHaveBeenCalled();
+        });
+
+        it('otherwise, it calls #highlightDate', () => {
+          spyOn(this.renderedComponent, 'isDateDisabled').and.returnValue(false);
+          spyOn(this.renderedComponent, 'isDateSelectable').and.returnValue(true);
+          var date = {};
+          this.renderedComponent.onHighlightDate(date);
+          expect(this.spy).toHaveBeenCalledWith(date);
+        });
+      });
+
+      describe('if props.selectionType is a range', () => {
+
+        beforeEach( () => {
+          useDocumentRenderer({
+            initialYear: 2000,
+            initialMonth: 6,
+            selectionType: 'range',
+          });
+          this.spy = spyOn(this.renderedComponent, 'highlightDate');
+        });
+
+        describe('if state.selectedStartDate is defined', () => {
+
+          it('calls #highlightRange', () => {
+            var range = moment.range();
+            spyOn(this.renderedComponent, 'sanitizeRange').and.returnValue(range);
+            spyOn(this.renderedComponent, 'highlightRange');
+            this.renderedComponent.setState({
+              selectedStartDate: moment(),
+            });
+            this.renderedComponent.onHighlightDate(moment());
+            expect(this.renderedComponent.highlightRange).toHaveBeenCalledWith(range);
+          });
+
+        });
+
+        describe('if state.selectedStartDate is undefined', () => {
+
+          it('if the date is disabled, it does not call #highlightDate', () => {
+            spyOn(this.renderedComponent, 'isDateDisabled').and.returnValue(true);
+            spyOn(this.renderedComponent, 'isDateSelectable').and.returnValue(true);
+            this.renderedComponent.onHighlightDate();
+            expect(this.spy).not.toHaveBeenCalled();
+          });
+
+          it('if the date is not selectable, it does not call #highlightDate', () => {
+            spyOn(this.renderedComponent, 'isDateDisabled').and.returnValue(false);
+            spyOn(this.renderedComponent, 'isDateSelectable').and.returnValue(false);
+            this.renderedComponent.onHighlightDate();
+            expect(this.spy).not.toHaveBeenCalled();
+          });
+
+          it('otherwise, it calls #highlightDate', () => {
+            spyOn(this.renderedComponent, 'isDateDisabled').and.returnValue(false);
+            spyOn(this.renderedComponent, 'isDateSelectable').and.returnValue(true);
+            var date = {};
+            this.renderedComponent.onHighlightDate(date);
+            expect(this.spy).toHaveBeenCalledWith(date);
+          });
+
+
+        });
+
+      });
 
     });
 
