@@ -1,6 +1,8 @@
 import DateRangePicker from '../DateRangePicker.jsx';
 import PaginationArrow from '../PaginationArrow.jsx';
 import CalendarMonth from '../calendar/CalendarMonth.jsx';
+import Legend from '../Legend.jsx';
+
 import moment from 'moment';
 import 'moment-range';
 import isMomentRange from '../utils/isMomentRange.js';
@@ -602,14 +604,15 @@ describe('The DateRangePicker component', function () {
 
   });
 
-  fdescribe('contains a help message', () => {
+  describe('contains a help message', () => {
 
     it('if props.helpMessage is defined', () => {
       useShallowRenderer({
         helpMessage: 'help',
       });
-      expect(this.renderedComponent.props.children[3].type).toBe('span');
-      expect(this.renderedComponent.props.children[3].props).toEqual({
+      var helpSpan = this.renderedComponent.props.children[3];
+      expect(helpSpan.type).toBe('span');
+      expect(helpSpan.props).toEqual({
         className: 'HelpMessage',
         children: 'help',
       });
@@ -625,11 +628,18 @@ describe('The DateRangePicker component', function () {
   describe('contains a Legend component', () => {
 
     it('if props.showLegend is defined', () => {
-
+      useShallowRenderer({
+        showLegend: true,
+        selectedLabel: 'label'
+      });
+      var legendComponent = this.renderedComponent.props.children[4];
+      expect(legendComponent.type).toBe(Legend);
+      expect(legendComponent.props.selectedLabel).toBe('label');
     });
 
     it('but not otherwise', () => {
-
+      useShallowRenderer();
+      expect(this.renderedComponent.props.children[4]).toBe(null);
     });
 
   });
