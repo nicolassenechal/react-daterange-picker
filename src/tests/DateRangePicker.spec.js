@@ -602,14 +602,22 @@ describe('The DateRangePicker component', function () {
 
   });
 
-  describe('contains a help message', () => {
+  fdescribe('contains a help message', () => {
 
     it('if props.helpMessage is defined', () => {
-
+      useShallowRenderer({
+        helpMessage: 'help',
+      });
+      expect(this.renderedComponent.props.children[3].type).toBe('span');
+      expect(this.renderedComponent.props.children[3].props).toEqual({
+        className: 'HelpMessage',
+        children: 'help',
+      });
     });
 
     it('but not otherwise', () => {
-
+      useShallowRenderer();
+      expect(this.renderedComponent.props.children[3]).toBe(null);
     });
 
   });
