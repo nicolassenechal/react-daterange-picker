@@ -966,5 +966,195 @@ describe('The DateRangePicker component', function () {
 
   });
 
+  describe('#completeRangeSelection', () => {
+
+    describe('if state.highlightedRange is defined', () => {
+
+      describe('and its start and end are two different days', () => {
+
+        beforeEach( () => {
+          this.selectSpy = jasmine.createSpy();
+          useDocumentRenderer({
+            initialYear: 2000,
+            initialMonth: 6,
+            onSelect: this.selectSpy,
+          });
+          this.highlightedRange = moment.range(
+            moment(new Date(2005, 1, 1)),
+            moment(new Date(2006, 1, 1))
+          );
+          this.highlightedDate = moment();
+          this.renderedComponent.setState({
+            highlightedRange: this.highlightedRange,
+            selectedStartDate: this.selectedStartDate,
+            highlightedDate: this.highlightedDate,
+            hideSelection: true,
+          });
+        });
+
+        it('updates states', () => {
+          this.renderedComponent.completeRangeSelection();
+          expect(this.renderedComponent.state.highlightedRange).toBe(null);
+          expect(this.renderedComponent.state.highlightedRange).toBe(null);
+          expect(this.renderedComponent.state.highlightedRange).toBe(null);
+          expect(this.renderedComponent.state.highlightedRange).toBe(null);
+        });
+
+        it('calls props.onHighlight', () => {
+          this.renderedComponent.completeRangeSelection();
+          expect(this.selectSpy).toHaveBeenCalledWith(this.highlightedRange, jasmine.any(Object));
+        });
+
+      });
+
+      describe('and its start and end are the same day and props.singleDateRange is true', () => {
+
+        beforeEach( () => {
+          this.selectSpy = jasmine.createSpy();
+          useDocumentRenderer({
+            initialYear: 2000,
+            initialMonth: 6,
+            onSelect: this.selectSpy,
+            singleDateRange: true,
+          });
+          this.highlightedRange = moment.range(
+            moment(new Date(2005, 1, 1)),
+            moment(new Date(2005, 1, 1))
+          );
+          this.highlightedDate = moment();
+          this.renderedComponent.setState({
+            highlightedRange: this.highlightedRange,
+            selectedStartDate: this.selectedStartDate,
+            highlightedDate: this.highlightedDate,
+            hideSelection: true,
+          });
+        });
+
+        it('updates states', () => {
+          this.renderedComponent.completeRangeSelection();
+          expect(this.renderedComponent.state.highlightedRange).toBe(null);
+          expect(this.renderedComponent.state.highlightedRange).toBe(null);
+          expect(this.renderedComponent.state.highlightedRange).toBe(null);
+          expect(this.renderedComponent.state.highlightedRange).toBe(null);
+        });
+
+        it('calls props.onHighlight', () => {
+          this.renderedComponent.completeRangeSelection();
+          expect(this.selectSpy).toHaveBeenCalledWith(this.highlightedRange, jasmine.any(Object));
+        });
+
+      });
+
+      describe('and its start and end are the same day and props.singleDateRange is false', () => {
+
+        beforeEach( () => {
+          this.selectSpy = jasmine.createSpy();
+          useDocumentRenderer({
+            initialYear: 2000,
+            initialMonth: 6,
+            onSelect: this.selectSpy,
+            singleDateRange: false,
+          });
+          this.highlightedRange = moment.range(
+            moment(new Date(2005, 1, 1)),
+            moment(new Date(2005, 1, 1))
+          );
+          this.highlightedDate = moment();
+          this.renderedComponent.setState({
+            highlightedRange: this.highlightedRange,
+            selectedStartDate: this.selectedStartDate,
+            highlightedDate: this.selectedStartDate,
+            hideSelection: true,
+          });
+        });
+
+        it('does not update states', () => {
+          this.renderedComponent.completeRangeSelection();
+          expect(this.renderedComponent.state.highlightedRange).toBe(this.highlightedRange);
+          expect(this.renderedComponent.state.selectedStartDate).toBe(this.selectedStartDate);
+          expect(this.renderedComponent.state.selectedStartDate).toBe(this.selectedStartDate);
+          expect(this.renderedComponent.state.hideSelection).toBe(true);
+        });
+
+        it('calls props.onHighlight', () => {
+          this.renderedComponent.completeRangeSelection();
+          expect(this.selectSpy).not.toHaveBeenCalled();
+        });
+
+      });
+
+      describe('and its start and end are the same day and props.singleDateRange is false', () => {
+
+        beforeEach( () => {
+          this.selectSpy = jasmine.createSpy();
+          useDocumentRenderer({
+            initialYear: 2000,
+            initialMonth: 6,
+            onSelect: this.selectSpy,
+            singleDateRange: false,
+          });
+          this.highlightedRange = moment.range(
+            moment(new Date(2005, 1, 1)),
+            moment(new Date(2005, 1, 1))
+          );
+          this.highlightedDate = moment();
+          this.renderedComponent.setState({
+            highlightedRange: this.highlightedRange,
+            selectedStartDate: this.selectedStartDate,
+            highlightedDate: this.selectedStartDate,
+            hideSelection: true,
+          });
+        });
+
+        it('does not update states', () => {
+          this.renderedComponent.completeRangeSelection();
+          expect(this.renderedComponent.state.highlightedRange).toBe(this.highlightedRange);
+          expect(this.renderedComponent.state.selectedStartDate).toBe(this.selectedStartDate);
+          expect(this.renderedComponent.state.selectedStartDate).toBe(this.selectedStartDate);
+          expect(this.renderedComponent.state.hideSelection).toBe(true);
+        });
+
+        it('calls props.onHighlight', () => {
+          this.renderedComponent.completeRangeSelection();
+          expect(this.selectSpy).not.toHaveBeenCalled();
+        });
+
+      });
+
+
+    });
+
+    describe('if state.highlightedRange is not defined', () => {
+
+      beforeEach( () => {
+        this.selectSpy = jasmine.createSpy();
+        useDocumentRenderer({
+          initialYear: 2000,
+          initialMonth: 6,
+          onSelect: this.selectSpy,
+        });
+        this.highlightedDate = moment();
+        this.renderedComponent.setState({
+          selectedStartDate: this.selectedStartDate,
+          highlightedDate: this.selectedStartDate,
+          hideSelection: true,
+        });
+      });
+
+      it('does not update states', () => {
+        this.renderedComponent.completeRangeSelection();
+        expect(this.renderedComponent.state.selectedStartDate).toBe(this.selectedStartDate);
+        expect(this.renderedComponent.state.selectedStartDate).toBe(this.selectedStartDate);
+        expect(this.renderedComponent.state.hideSelection).toBe(true);
+      });
+
+      it('calls props.onHighlight', () => {
+        this.renderedComponent.completeRangeSelection();
+        expect(this.selectSpy).not.toHaveBeenCalled();
+      });
+
+    });
+
+  });
 
 });
