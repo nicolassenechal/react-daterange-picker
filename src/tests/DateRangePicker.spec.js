@@ -8,8 +8,6 @@ import 'moment-range';
 import isMomentRange from '../utils/isMomentRange.js';
 import areMomentRangesEqual from '../utils/areMomentRangesEqual.js';
 import Immutable from 'immutable';
-
-
 import React from 'react/addons';
 
 const TestUtils = React.addons.TestUtils;
@@ -31,7 +29,7 @@ describe('The DateRangePicker component', function () {
     this.renderedComponent = TestUtils.renderIntoDocument(getDateRangePicker(props));
   };
 
-  const buildComponent = () => {
+  const useDocumentRendererWithComplexStates = () => {
     const stateDefinitions = {
       available: {
       },
@@ -723,7 +721,7 @@ describe('The DateRangePicker component', function () {
   describe('#isDateSelectable', () => {
 
     beforeEach( () => {
-      buildComponent();
+      useDocumentRendererWithComplexStates();
     });
 
     it('returns true if the date is selectable', () => {
@@ -749,7 +747,7 @@ describe('The DateRangePicker component', function () {
   describe('#dateRangesForDate', () => {
 
     beforeEach( () => {
-      buildComponent();
+      useDocumentRendererWithComplexStates();
     });
 
     it('returns the expected range', () => {
@@ -763,7 +761,7 @@ describe('The DateRangePicker component', function () {
   describe('#sanitizeRange', () => {
 
     beforeEach( () => {
-      buildComponent();
+      useDocumentRendererWithComplexStates();
     });
 
     describe('if forwards is true', () => {
@@ -865,7 +863,7 @@ describe('The DateRangePicker component', function () {
   describe('#statesForDate', () => {
 
     beforeEach( () => {
-      buildComponent();
+      useDocumentRendererWithComplexStates();
     });
 
     it('returns the expected state for the provided date', () => {
@@ -880,7 +878,7 @@ describe('The DateRangePicker component', function () {
   describe('#statesForRange', () => {
 
     beforeEach( () => {
-      buildComponent();
+      useDocumentRendererWithComplexStates();
     });
 
     it('returns the expected value if a one-day range is provided', () => {
@@ -950,7 +948,6 @@ describe('The DateRangePicker component', function () {
           hideSelection: true,
         });
       });
-
 
       it('does not update states', () => {
         this.renderedComponent.completeSelection();
@@ -1082,45 +1079,6 @@ describe('The DateRangePicker component', function () {
         });
 
       });
-
-      describe('and its start and end are the same day and props.singleDateRange is false', () => {
-
-        beforeEach( () => {
-          this.selectSpy = jasmine.createSpy();
-          useDocumentRenderer({
-            initialYear: 2000,
-            initialMonth: 6,
-            onSelect: this.selectSpy,
-            singleDateRange: false,
-          });
-          this.highlightedRange = moment.range(
-            moment(new Date(2005, 1, 1)),
-            moment(new Date(2005, 1, 1))
-          );
-          this.highlightedDate = moment();
-          this.renderedComponent.setState({
-            highlightedRange: this.highlightedRange,
-            selectedStartDate: this.selectedStartDate,
-            highlightedDate: this.selectedStartDate,
-            hideSelection: true,
-          });
-        });
-
-        it('does not update states', () => {
-          this.renderedComponent.completeRangeSelection();
-          expect(this.renderedComponent.state.highlightedRange).toBe(this.highlightedRange);
-          expect(this.renderedComponent.state.selectedStartDate).toBe(this.selectedStartDate);
-          expect(this.renderedComponent.state.selectedStartDate).toBe(this.selectedStartDate);
-          expect(this.renderedComponent.state.hideSelection).toBe(true);
-        });
-
-        it('calls props.onHighlight', () => {
-          this.renderedComponent.completeRangeSelection();
-          expect(this.selectSpy).not.toHaveBeenCalled();
-        });
-
-      });
-
 
     });
 
