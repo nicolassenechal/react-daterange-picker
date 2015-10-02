@@ -68,7 +68,7 @@ describe('The DateRangePicker component', function () {
       minimumDate: new Date(2001, 1, 15),
       maximumDate: new Date(2001, 1, 20),
     });
-  }
+  };
 
   beforeEach(() => {
     this.spyCx = spyOn(DateRangePicker.prototype.__reactAutoBindMap, 'cx').and.callFake( (data) => {
@@ -670,7 +670,7 @@ describe('The DateRangePicker component', function () {
     it('if props.showLegend is defined', () => {
       useShallowRenderer({
         showLegend: true,
-        selectedLabel: 'label'
+        selectedLabel: 'label',
       });
       var legendComponent = this.renderedComponent.props.children[4];
       expect(legendComponent.type).toBe(Legend);
