@@ -824,7 +824,7 @@ describe('The DateRangePicker component', function () {
 
   });
 
-  fdescribe('#sanitizeRange', () => {
+  describe('#sanitizeRange', () => {
 
     beforeEach( () => {
       const stateDefinitions = {
@@ -957,6 +957,53 @@ describe('The DateRangePicker component', function () {
           moment(new Date(2001, 1, 17))
         ))).toBe(true);
       });
+    });
+
+  });
+
+  describe('#statesForDate', () => {
+
+    beforeEach( () => {
+      const stateDefinitions = {
+        available: {
+        },
+        enquire: {
+        },
+        unavailable: {
+          selectable: false,
+        },
+      };
+
+      const dateStates = [
+        {
+          state: 'enquire',
+          range: moment.range(
+            moment(new Date(2000, 1, 15)),
+            moment(new Date(2001, 1, 15))
+          ),
+        },
+        {
+          state: 'unavailable',
+          range: moment.range(
+            moment(new Date(2002, 1, 15)),
+            moment(new Date(2003, 1, 15))
+          ),
+        },
+      ];
+
+      useDocumentRenderer({
+        initialYear: 2000,
+        initialMonth: 6,
+        dateStates: dateStates,
+        stateDefinitions: stateDefinitions,
+        defaultState: 'available',
+        minimumDate: new Date(2001, 1, 15),
+        maximumDate: new Date(2001, 1, 20),
+      });
+    });
+
+    it('returns the expected state for the provided date', () => {
+      expect(this.renderedComponent.statesForDate(moment(new Date(2003, 1, 1))).get(0)).toBe('unavailable');
     });
 
   });
