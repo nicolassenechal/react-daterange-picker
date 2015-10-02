@@ -7,6 +7,7 @@ import moment from 'moment';
 import 'moment-range';
 import isMomentRange from '../utils/isMomentRange.js';
 import areMomentRangesEqual from '../utils/areMomentRangesEqual.js';
+import Immutable from 'immutable';
 
 
 import React from 'react/addons';
@@ -680,6 +681,148 @@ describe('The DateRangePicker component', function () {
 
   });
 
+  describe('#isDateSelectable', () => {
+
+    beforeEach( () => {
+      const stateDefinitions = {
+        available: {
+        },
+        enquire: {
+        },
+        unavailable: {
+          selectable: false,
+        },
+      };
+
+      const dateStates = [
+        {
+          state: 'enquire',
+          range: moment.range(
+            moment(new Date(2000, 1, 15)),
+            moment(new Date(2001, 1, 15))
+          ),
+        },
+        {
+          state: 'unavailable',
+          range: moment.range(
+            moment(new Date(2002, 1, 15)),
+            moment(new Date(2003, 1, 15))
+          ),
+        },
+      ];
+
+      useDocumentRenderer({
+        initialYear: 2000,
+        initialMonth: 6,
+        dateStates: dateStates,
+        stateDefinitions: stateDefinitions,
+        defaultState: 'available',
+      });
+    });
+
+    it('returns true if the date is selectable', () => {
+      expect(this.renderedComponent.isDateSelectable(new Date(2000, 1, 20))).toBe(true);
+    });
+
+    it('returns false otherwise', () => {
+      expect(this.renderedComponent.isDateSelectable(new Date(2002, 1, 20))).toBe(false);
+    });
+
+  });
+
+  describe('#nonSelectableStateRanges', () => {
+    beforeEach( () => {
+      const stateDefinitions = {
+        available: {
+        },
+        enquire: {
+        },
+        unavailable: {
+          selectable: false,
+        },
+      };
+      this.nonSelectableRange = moment.range(
+        moment(new Date(2002, 1, 15)),
+        moment(new Date(2003, 1, 15))
+      );
+      const dateStates = [
+        {
+          state: 'enquire',
+          range: moment.range(
+            moment(new Date(2000, 1, 15)),
+            moment(new Date(2001, 1, 15))
+          ),
+        },
+        {
+          state: 'unavailable',
+          range: this.nonSelectableRange,
+        },
+      ];
+
+      useDocumentRenderer({
+        initialYear: 2000,
+        initialMonth: 6,
+        dateStates: dateStates,
+        stateDefinitions: stateDefinitions,
+        defaultState: 'available',
+      });
+
+    });
+
+    it('returns the expected range', () => {
+      var list = this.renderedComponent.nonSelectableStateRanges();
+      expect(list).toEqual(jasmine.any(Immutable.List));
+      expect(areMomentRangesEqual(list.get(0).get('range'), this.nonSelectableRange)).toBe(true);
+    });
+
+  });
+
+  describe('#dateRangesForDate', () => {
+
+    beforeEach( () => {
+      const stateDefinitions = {
+        available: {
+        },
+        enquire: {
+        },
+        unavailable: {
+          selectable: false,
+        },
+      };
+
+      const dateStates = [
+        {
+          state: 'enquire',
+          range: moment.range(
+            moment(new Date(2000, 1, 15)),
+            moment(new Date(2001, 1, 15))
+          ),
+        },
+        {
+          state: 'unavailable',
+          range: moment.range(
+            moment(new Date(2002, 1, 15)),
+            moment(new Date(2003, 1, 15))
+          ),
+        },
+      ];
+
+      useDocumentRenderer({
+        initialYear: 2000,
+        initialMonth: 6,
+        dateStates: dateStates,
+        stateDefinitions: stateDefinitions,
+        defaultState: 'available',
+      });
+    });
+
+    it('returns the expected range', () => {
+      var list = this.renderedComponent.dateRangesForDate(new Date(2002, 6, 15));
+      expect(list).toEqual(jasmine.any(Immutable.List));
+      expect(list.get(0).get('state')).toBe('unavailable');
+    });
+
+  });
 
 
 });
