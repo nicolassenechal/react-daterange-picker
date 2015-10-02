@@ -869,7 +869,41 @@ describe('The DateRangePicker component', function () {
     });
 
     it('returns the expected state for the provided date', () => {
-      expect(this.renderedComponent.statesForDate(moment(new Date(2003, 1, 1))).get(0)).toBe('unavailable');
+      var list = this.renderedComponent.statesForDate(moment(new Date(2003, 1, 1)));
+      expect(list).toEqual(jasmine.any(Immutable.List));
+      expect(list.size).toBe(1);
+      expect(list.get(0)).toBe('unavailable');
+    });
+
+  });
+
+  describe('#statesForRange', () => {
+
+    beforeEach( () => {
+      buildComponent();
+    });
+
+    it('returns the expected value if a one-day range is provided', () => {
+      var range = moment.range(
+        moment(new Date(2003, 1, 1)),
+        moment(new Date(2003, 1, 1))
+      );
+      var list = this.renderedComponent.statesForRange(range);
+      expect(list).toEqual(jasmine.any(Immutable.List));
+      expect(list.size).toBe(1);
+      expect(list.get(0)).toBe('unavailable');
+    });
+
+    it('returns the expected value if a multi-day range is provided', () => {
+      var range = moment.range(
+        moment(new Date(2003, 1, 14)),
+        moment(new Date(2003, 1, 16))
+      );
+      var list = this.renderedComponent.statesForRange(range);
+      expect(list).toEqual(jasmine.any(Immutable.List));
+      expect(list.size).toBe(2);
+      expect(list.get(0)).toBe('unavailable');
+      expect(list.get(1)).toBe('available');
     });
 
   });
