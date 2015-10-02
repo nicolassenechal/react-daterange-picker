@@ -824,5 +824,142 @@ describe('The DateRangePicker component', function () {
 
   });
 
+  fdescribe('#sanitizeRange', () => {
+
+    beforeEach( () => {
+      const stateDefinitions = {
+        available: {
+        },
+        enquire: {
+        },
+        unavailable: {
+          selectable: false,
+        },
+      };
+
+      const dateStates = [
+        {
+          state: 'enquire',
+          range: moment.range(
+            moment(new Date(2000, 1, 15)),
+            moment(new Date(2001, 1, 15))
+          ),
+        },
+        {
+          state: 'unavailable',
+          range: moment.range(
+            moment(new Date(2002, 1, 15)),
+            moment(new Date(2003, 1, 15))
+          ),
+        },
+      ];
+
+      useDocumentRenderer({
+        initialYear: 2000,
+        initialMonth: 6,
+        dateStates: dateStates,
+        stateDefinitions: stateDefinitions,
+        defaultState: 'available',
+        minimumDate: new Date(2001, 1, 15),
+        maximumDate: new Date(2001, 1, 20),
+      });
+    });
+
+    describe('if forwards is true', () => {
+
+      it('and if the provided range intersects with the non selectable ranges it returns a smaller range', () => {
+        var range = this.renderedComponent.sanitizeRange(moment.range(
+          moment(new Date(2001, 1, 15)),
+          moment(new Date(2003, 1, 15))
+        ), true);
+        expect(areMomentRangesEqual(range, moment.range(
+          moment(new Date(2001, 1, 15)),
+          moment(new Date(2002, 1, 15))
+        ))).toBe(true);
+      });
+
+      it('and if the provided range starts before the enabled range it returns a smaller range', () => {
+        var range = this.renderedComponent.sanitizeRange(moment.range(
+          moment(new Date(2001, 1, 15)),
+          moment(new Date(2002, 1, 1))
+        ), true);
+        expect(areMomentRangesEqual(range, moment.range(
+          moment(new Date(2001, 1, 15)),
+          moment(new Date(2001, 1, 20))
+        ))).toBe(true);
+      });
+
+      it('and if the provided range finishes after the enabled range it returns a smaller range', () => {
+        var range = this.renderedComponent.sanitizeRange(moment.range(
+          moment(new Date(2006, 1, 15)),
+          moment(new Date(2007, 1, 1))
+        ), true);
+        expect(areMomentRangesEqual(range, moment.range(
+          moment(new Date(2006, 1, 15)),
+          moment(new Date(2001, 1, 20))
+        ))).toBe(true);
+      });
+
+      it('otherwise it returns the full range', () => {
+        var range = this.renderedComponent.sanitizeRange(moment.range(
+          moment(new Date(2001, 1, 15)),
+          moment(new Date(2001, 1, 17))
+        ), true);
+        expect(areMomentRangesEqual(range, moment.range(
+          moment(new Date(2001, 1, 15)),
+          moment(new Date(2001, 1, 17))
+        ))).toBe(true);
+      });
+
+    });
+
+    describe('otherwise', () => {
+      it('and if the provided range intersects with the non selectable ranges it returns a smaller range', () => {
+        var range = this.renderedComponent.sanitizeRange(moment.range(
+          moment(new Date(2001, 1, 15)),
+          moment(new Date(2005, 1, 15))
+        ), false);
+        expect(areMomentRangesEqual(range, moment.range(
+          moment(new Date(2003, 1, 15)),
+          moment(new Date(2005, 1, 15))
+        ))).toBe(true);
+      });
+
+      it('and if the provided range starts before the enabled range it returns a smaller range', () => {
+        var range = this.renderedComponent.sanitizeRange(moment.range(
+          moment(new Date(2001, 1, 15)),
+          moment(new Date(2002, 1, 1))
+        ), false);
+        expect(areMomentRangesEqual(range, moment.range(
+          moment(new Date(2001, 1, 15)),
+          moment(new Date(2001, 1, 20))
+        ))).toBe(true);
+      });
+
+      it('and if the provided range finishes after the enabled range it returns a smaller range', () => {
+        var range = this.renderedComponent.sanitizeRange(moment.range(
+          moment(new Date(2006, 1, 15)),
+          moment(new Date(2007, 1, 1))
+        ), false);
+        expect(areMomentRangesEqual(range, moment.range(
+          moment(new Date(2006, 1, 15)),
+          moment(new Date(2001, 1, 20))
+        ))).toBe(true);
+      });
+
+      it('otherwise it returns the full range', () => {
+        var range = this.renderedComponent.sanitizeRange(moment.range(
+          moment(new Date(2001, 1, 15)),
+          moment(new Date(2001, 1, 17))
+        ), false);
+        expect(areMomentRangesEqual(range, moment.range(
+          moment(new Date(2001, 1, 15)),
+          moment(new Date(2001, 1, 17))
+        ))).toBe(true);
+      });
+    });
+
+  });
+
 
 });
