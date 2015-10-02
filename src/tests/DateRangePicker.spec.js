@@ -31,6 +31,45 @@ describe('The DateRangePicker component', function () {
     this.renderedComponent = TestUtils.renderIntoDocument(getDateRangePicker(props));
   };
 
+  const buildComponent = () => {
+    const stateDefinitions = {
+      available: {
+      },
+      enquire: {
+      },
+      unavailable: {
+        selectable: false,
+      },
+    };
+    this.nonSelectableRange = moment.range(
+      moment(new Date(2002, 1, 15)),
+      moment(new Date(2003, 1, 15))
+    );
+    const dateStates = [
+      {
+        state: 'enquire',
+        range: moment.range(
+          moment(new Date(2000, 1, 15)),
+          moment(new Date(2001, 1, 15))
+        ),
+      },
+      {
+        state: 'unavailable',
+        range: this.nonSelectableRange,
+      },
+    ];
+
+    useDocumentRenderer({
+      initialYear: 2000,
+      initialMonth: 6,
+      dateStates: dateStates,
+      stateDefinitions: stateDefinitions,
+      defaultState: 'available',
+      minimumDate: new Date(2001, 1, 15),
+      maximumDate: new Date(2001, 1, 20),
+    });
+  }
+
   beforeEach(() => {
     this.spyCx = spyOn(DateRangePicker.prototype.__reactAutoBindMap, 'cx').and.callFake( (data) => {
       return data.element || 'my-class';
@@ -684,40 +723,7 @@ describe('The DateRangePicker component', function () {
   describe('#isDateSelectable', () => {
 
     beforeEach( () => {
-      const stateDefinitions = {
-        available: {
-        },
-        enquire: {
-        },
-        unavailable: {
-          selectable: false,
-        },
-      };
-
-      const dateStates = [
-        {
-          state: 'enquire',
-          range: moment.range(
-            moment(new Date(2000, 1, 15)),
-            moment(new Date(2001, 1, 15))
-          ),
-        },
-        {
-          state: 'unavailable',
-          range: moment.range(
-            moment(new Date(2002, 1, 15)),
-            moment(new Date(2003, 1, 15))
-          ),
-        },
-      ];
-
-      useDocumentRenderer({
-        initialYear: 2000,
-        initialMonth: 6,
-        dateStates: dateStates,
-        stateDefinitions: stateDefinitions,
-        defaultState: 'available',
-      });
+      buildComponent();
     });
 
     it('returns true if the date is selectable', () => {
@@ -731,43 +737,6 @@ describe('The DateRangePicker component', function () {
   });
 
   describe('#nonSelectableStateRanges', () => {
-    beforeEach( () => {
-      const stateDefinitions = {
-        available: {
-        },
-        enquire: {
-        },
-        unavailable: {
-          selectable: false,
-        },
-      };
-      this.nonSelectableRange = moment.range(
-        moment(new Date(2002, 1, 15)),
-        moment(new Date(2003, 1, 15))
-      );
-      const dateStates = [
-        {
-          state: 'enquire',
-          range: moment.range(
-            moment(new Date(2000, 1, 15)),
-            moment(new Date(2001, 1, 15))
-          ),
-        },
-        {
-          state: 'unavailable',
-          range: this.nonSelectableRange,
-        },
-      ];
-
-      useDocumentRenderer({
-        initialYear: 2000,
-        initialMonth: 6,
-        dateStates: dateStates,
-        stateDefinitions: stateDefinitions,
-        defaultState: 'available',
-      });
-
-    });
 
     it('returns the expected range', () => {
       var list = this.renderedComponent.nonSelectableStateRanges();
@@ -780,40 +749,7 @@ describe('The DateRangePicker component', function () {
   describe('#dateRangesForDate', () => {
 
     beforeEach( () => {
-      const stateDefinitions = {
-        available: {
-        },
-        enquire: {
-        },
-        unavailable: {
-          selectable: false,
-        },
-      };
-
-      const dateStates = [
-        {
-          state: 'enquire',
-          range: moment.range(
-            moment(new Date(2000, 1, 15)),
-            moment(new Date(2001, 1, 15))
-          ),
-        },
-        {
-          state: 'unavailable',
-          range: moment.range(
-            moment(new Date(2002, 1, 15)),
-            moment(new Date(2003, 1, 15))
-          ),
-        },
-      ];
-
-      useDocumentRenderer({
-        initialYear: 2000,
-        initialMonth: 6,
-        dateStates: dateStates,
-        stateDefinitions: stateDefinitions,
-        defaultState: 'available',
-      });
+      buildComponent();
     });
 
     it('returns the expected range', () => {
@@ -827,42 +763,7 @@ describe('The DateRangePicker component', function () {
   describe('#sanitizeRange', () => {
 
     beforeEach( () => {
-      const stateDefinitions = {
-        available: {
-        },
-        enquire: {
-        },
-        unavailable: {
-          selectable: false,
-        },
-      };
-
-      const dateStates = [
-        {
-          state: 'enquire',
-          range: moment.range(
-            moment(new Date(2000, 1, 15)),
-            moment(new Date(2001, 1, 15))
-          ),
-        },
-        {
-          state: 'unavailable',
-          range: moment.range(
-            moment(new Date(2002, 1, 15)),
-            moment(new Date(2003, 1, 15))
-          ),
-        },
-      ];
-
-      useDocumentRenderer({
-        initialYear: 2000,
-        initialMonth: 6,
-        dateStates: dateStates,
-        stateDefinitions: stateDefinitions,
-        defaultState: 'available',
-        minimumDate: new Date(2001, 1, 15),
-        maximumDate: new Date(2001, 1, 20),
-      });
+      buildComponent();
     });
 
     describe('if forwards is true', () => {
@@ -964,42 +865,7 @@ describe('The DateRangePicker component', function () {
   describe('#statesForDate', () => {
 
     beforeEach( () => {
-      const stateDefinitions = {
-        available: {
-        },
-        enquire: {
-        },
-        unavailable: {
-          selectable: false,
-        },
-      };
-
-      const dateStates = [
-        {
-          state: 'enquire',
-          range: moment.range(
-            moment(new Date(2000, 1, 15)),
-            moment(new Date(2001, 1, 15))
-          ),
-        },
-        {
-          state: 'unavailable',
-          range: moment.range(
-            moment(new Date(2002, 1, 15)),
-            moment(new Date(2003, 1, 15))
-          ),
-        },
-      ];
-
-      useDocumentRenderer({
-        initialYear: 2000,
-        initialMonth: 6,
-        dateStates: dateStates,
-        stateDefinitions: stateDefinitions,
-        defaultState: 'available',
-        minimumDate: new Date(2001, 1, 15),
-        maximumDate: new Date(2001, 1, 20),
-      });
+      buildComponent();
     });
 
     it('returns the expected state for the provided date', () => {
