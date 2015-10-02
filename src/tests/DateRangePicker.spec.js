@@ -908,5 +908,63 @@ describe('The DateRangePicker component', function () {
 
   });
 
+  describe('#completeSelection', () => {
+
+    beforeEach( () => {
+      this.selectSpy = jasmine.createSpy();
+      useDocumentRenderer({
+        initialYear: 2000,
+        initialMonth: 6,
+        onSelect: this.selectSpy,
+      });
+    });
+
+    describe('if state.highlightedDate is defined', () => {
+
+      beforeEach( () => {
+        this.highlightedDate = moment();
+        this.renderedComponent.setState({
+          highlightedDate: this.highlightedDate,
+          hideSelection: true,
+        });
+      });
+
+      it('updates states', () => {
+        this.renderedComponent.completeSelection();
+        expect(this.renderedComponent.state.hideSelection).toBe(false);
+        expect(this.renderedComponent.state.highlightedDate).toBe(null);
+      });
+
+      it('calls props.onSelect', () => {
+        this.renderedComponent.completeSelection();
+        expect(this.selectSpy).toHaveBeenCalledWith(this.highlightedDate, jasmine.any(Object));
+      });
+
+    });
+
+    describe('if state.highlightedDate is not defined', () => {
+
+      beforeEach( () => {
+        this.highlightedDate = moment();
+        this.renderedComponent.setState({
+          hideSelection: true,
+        });
+      });
+
+
+      it('does not update states', () => {
+        this.renderedComponent.completeSelection();
+        expect(this.renderedComponent.state.hideSelection).toBe(true);
+      });
+
+      it('does not call props.onSelect', () => {
+        this.renderedComponent.completeSelection();
+        expect(this.selectSpy).not.toHaveBeenCalled();
+      });
+
+    });
+
+  });
+
 
 });
